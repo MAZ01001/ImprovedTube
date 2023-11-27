@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> GENERAL
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.general = {
+menu.skeleton.main.layers.section.general = {
 	component: 'button',
 	variant: 'general',
 	category: true,

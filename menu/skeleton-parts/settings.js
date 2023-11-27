@@ -5,6 +5,7 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> SETTINGS:
 ----------------------------------------------------------------
@@ -21,7 +22,7 @@ var satus;
 # BUTTON
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings = {
 	component: 'button',
 	category: true,
 	on: {
@@ -71,7 +72,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings = {
 # APPEARANCE
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.firstSection.appearance = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.firstSection.appearance = {
 	component: 'button',
 	text: 'appearance',
 	before: {
@@ -201,7 +202,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.firstSectio
 # LANGUAGE
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language = {
 	component: 'button',
 	text: 'language',
 	before: {
@@ -486,7 +487,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 					text: 'ImprovedTube',
 					storage: 'language',
 					options: function () {
-						return extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language.on.click.section.languages;
+						return menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language.on.click.section.languages;
 					}
 				},
 				youtube: {
@@ -494,7 +495,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 					text: 'YouTube',
 					storage: 'youtube_language',
 					options: function () {
-						return extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language.on.click.section.languages;
+						return menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.language.on.click.section.languages;
 					}
 				}
 			}
@@ -507,7 +508,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 # BACKUP & RESET
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.backupAndReset = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.backupAndReset = {
 	component: 'button',
 	text: 'backupAndReset',
 	before: {
@@ -538,7 +539,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 					on: {
 						click: function () {
 							if (location.href.indexOf('/index.html?action=import-settings') !== -1) {
-								extension.importSettings();
+								menu.importSettings();
 							} else {
 								window.open(chrome.runtime.getURL('menu/index.html?action=import-settings'), '_blank');
 							}
@@ -551,7 +552,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 					on: {
 						click: function () {
 							if (location.href.indexOf('/index.html?action=export-settings') !== -1) {
-								extension.exportSettings();
+								menu.exportSettings();
 							} else {
 								window.open(chrome.runtime.getURL('menu/index.html?action=export-settings'), '_blank');
 							}
@@ -690,7 +691,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 # DEVELOPER OPTIONS
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.developerOptions = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.developerOptions = {
 	component: 'button',
 	text: 'developerOptions',
 	before: {
@@ -768,7 +769,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 # ABOUT
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.about = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.about = {
 	component: 'button',
 	text: 'Specs',
 	before: {
@@ -875,7 +876,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSecti
 # DATE & TIME
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.dateAndTime = {
+menu.skeleton.header.sectionEnd.menu.on.click.settings.on.click.secondSection.dateAndTime = {
 	component: 'button',
 	text: 'dateAndTime',
 	before: {

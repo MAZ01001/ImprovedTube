@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> BLACKLIST
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.blacklist = {
+menu.skeleton.main.layers.section.blacklist = {
 	component: 'button',
 	variant: 'blacklist',
 	category: true,

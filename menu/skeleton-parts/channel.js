@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> CHANNEL
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.channel = {
+menu.skeleton.main.layers.section.channel = {
 	component: 'button',
 	variant: 'channel',
 	category: true,

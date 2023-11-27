@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> PLAYER
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.player = {
+menu.skeleton.main.layers.section.player = {
 	component: 'button',
 	variant: 'player',
 	category: true,
@@ -48,7 +49,7 @@ extension.skeleton.main.layers.section.player = {
 # SECTION
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.player.on.click = {
+menu.skeleton.main.layers.section.player.on.click = {
 	section_1: {
 		component: 'section',
 		variant: 'card',
@@ -804,7 +805,7 @@ extension.skeleton.main.layers.section.player.on.click = {
 												},
 												cancel: function () {
 												}
-											}, extension.skeleton.rendered);
+											}, menu.skeleton.rendered);
 										} else {
 											this.flip(true);
 											this.parentElement.skeleton.sanitize();
@@ -836,7 +837,7 @@ extension.skeleton.main.layers.section.player.on.click = {
 												},
 												cancel: function () {
 												}
-											}, extension.skeleton.rendered);
+											}, menu.skeleton.rendered);
 										} else {
 											this.flip(true);
 											this.parentElement.skeleton.sanitize();
@@ -917,7 +918,7 @@ extension.skeleton.main.layers.section.player.on.click = {
 							cancel: function () {
 								// nothing happens when we cancel
 							}
-						}, extension.skeleton.rendered);
+						}, menu.skeleton.rendered);
 					} else {
 						// manually turn switch OFF
 						this.flip(false);

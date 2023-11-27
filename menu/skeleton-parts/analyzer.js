@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> ANALYZER
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.analyzer = {
+menu.skeleton.main.layers.section.analyzer = {
 	component: 'button',
 	variant: 'analyzer',
 	category: true,

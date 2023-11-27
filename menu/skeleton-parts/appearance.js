@@ -5,6 +5,7 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> APPEARANCE
 ----------------------------------------------------------------
@@ -15,7 +16,7 @@ var satus;
 # Footer
 # Sidebar
 --------------------------------------------------------------*/
-extension.skeleton.main.layers.section.appearance = {
+menu.skeleton.main.layers.section.appearance = {
 	component: "button",
 	variant: "appearance",
 	category: true,
@@ -57,7 +58,7 @@ extension.skeleton.main.layers.section.appearance = {
 # HEADER
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.header = {
+menu.skeleton.main.layers.section.appearance.on.click.header = {
 	component: "button",
 	variant: "header",
 	text: "header",
@@ -121,7 +122,7 @@ extension.skeleton.main.layers.section.appearance.on.click.header = {
 # PLAYER
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.player = {
+menu.skeleton.main.layers.section.appearance.on.click.player = {
 	component: "button",
 	variant: "player",
 	text: "player",
@@ -400,7 +401,7 @@ extension.skeleton.main.layers.section.appearance.on.click.player = {
 # DETAIL
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.details = {
+menu.skeleton.main.layers.section.appearance.on.click.details = {
 	component: "button",
 	variant: "details",
 	text: "details",
@@ -677,7 +678,7 @@ extension.skeleton.main.layers.section.appearance.on.click.details = {
 # COMMENTS
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.comments = {
+menu.skeleton.main.layers.section.appearance.on.click.comments = {
 	component: "button",
 	variant: "comments",
 	text: "comments",
@@ -731,7 +732,7 @@ extension.skeleton.main.layers.section.appearance.on.click.comments = {
 # FOOTER
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.footer = {
+menu.skeleton.main.layers.section.appearance.on.click.footer = {
 	component: "button",
 	variant: "footer",
 	text: "footer",
@@ -753,7 +754,7 @@ extension.skeleton.main.layers.section.appearance.on.click.footer = {
 # SIDEBAR
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.appearance.on.click.sidebar = {
+menu.skeleton.main.layers.section.appearance.on.click.sidebar = {
 	component: "button",
 	variant: "sidebar",
 	text: "sidebar",

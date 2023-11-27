@@ -5,6 +5,7 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> THEMES
 ----------------------------------------------------------------
@@ -12,7 +13,7 @@ var satus;
 # Themes
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.themes = {
+menu.skeleton.main.layers.section.themes = {
 	component: 'button',
 	variant: 'themes',
 	category: true,
@@ -56,7 +57,7 @@ extension.skeleton.main.layers.section.themes = {
 # THEMES
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.themes.on.click.section = {
+menu.skeleton.main.layers.section.themes.on.click.section = {
 	component: 'section',
 	variant: 'transparent-card',
 

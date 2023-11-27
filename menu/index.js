@@ -16,10 +16,13 @@ var satus;
 # GLOBAL VARIABLE
 --------------------------------------------------------------*/
 
-var extension = {
+/**
+ * @global
+ * @see menu in `ref.d.ts`
+ */
+var menu = {
 	skeleton: {}
 };
-
 
 /*--------------------------------------------------------------
 # INITIALIZATION
@@ -33,12 +36,12 @@ satus.storage.import(function (items) {
 	}
 
 	satus.locale.import(language, function () {
-		satus.render(extension.skeleton);
+		satus.render(menu.skeleton);
 
-		extension.exportSettings();
-		extension.importSettings();
+		menu.exportSettings();
+		menu.importSettings();
 
-		satus.parentify(extension.skeleton, [
+		satus.parentify(menu.skeleton, [
 			'attr',
 			'baseProvider',
 			'layersProvider',
@@ -50,8 +53,8 @@ satus.storage.import(function (items) {
 			'value'
 		]);
 
-		extension.attributes();
-		satus.events.on('storage-set', extension.attributes);
+		menu.attributes();
+		satus.events.on('storage-set', menu.attributes);
 	}, '_locales/');
 });
 

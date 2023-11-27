@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> ACTIVE FEATURES
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.activeFeatures = {
+menu.skeleton.header.sectionEnd.menu.on.click.activeFeatures = {
 	component: 'button',
 	on: {
 		click: {
@@ -19,7 +20,7 @@ extension.skeleton.header.sectionEnd.menu.on.click.activeFeatures = {
 				render: function () {
 					var component = this;
 
-					satus.search('', extension.skeleton, function (features) {
+					satus.search('', menu.skeleton, function (features) {
 						var skeleton = {};
 
 						for (var key in features) {

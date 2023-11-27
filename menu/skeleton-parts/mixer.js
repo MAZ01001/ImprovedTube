@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> MIXER
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.mixer = {
+menu.skeleton.header.sectionEnd.menu.on.click.mixer = {
 	component: 'button',
 	on: {
 		click: {

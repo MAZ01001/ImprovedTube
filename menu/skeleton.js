@@ -5,6 +5,7 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> SKELETON:
 ----------------------------------------------------------------
@@ -17,7 +18,7 @@ var satus;
 # BASE
 --------------------------------------------------------------*/
 
-extension.skeleton = {
+menu.skeleton = {
 	component: 'base'
 };
 
@@ -26,7 +27,7 @@ extension.skeleton = {
 # HEADER
 --------------------------------------------------------------*/
 
-extension.skeleton.header = {
+menu.skeleton.header = {
 	component: 'header',
 
 	sectionStart: {
@@ -159,7 +160,7 @@ extension.skeleton.header = {
 # MAIN
 --------------------------------------------------------------*/
 
-extension.skeleton.main = {
+menu.skeleton.main = {
 	component: 'main',
 
 	layers: {

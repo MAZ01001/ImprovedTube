@@ -5,6 +5,7 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> FUNCTIONS:
 ----------------------------------------------------------------
@@ -17,7 +18,7 @@ var satus;
 # ATTRIBUTES
 --------------------------------------------------------------*/
 
-extension.attributes = function () {
+menu.attributes = function () {
 	var attributes = {
 		theme: true,
 		improvedtube_home: true,
@@ -42,7 +43,7 @@ extension.attributes = function () {
 		}
 
 		if (satus.isset(value)) {
-			extension.skeleton.rendered.setAttribute(attribute.replace('it_', '').replace(/_/g, '-'), value);
+			menu.skeleton.rendered.setAttribute(attribute.replace('it_', '').replace(/_/g, '-'), value);
 		}
 	}
 };
@@ -52,7 +53,7 @@ extension.attributes = function () {
 # EXPORT SETTINGS
 --------------------------------------------------------------*/
 
-extension.exportSettings = function () {
+menu.exportSettings = function () {
 	if (location.href.indexOf('action=export-settings') !== -1) {
 		satus.render({
 			component: 'modal',
@@ -100,7 +101,7 @@ extension.exportSettings = function () {
 					}
 				}
 			}
-		}, extension.skeleton.rendered);
+		}, menu.skeleton.rendered);
 	}
 };
 
@@ -109,7 +110,7 @@ extension.exportSettings = function () {
 # IMPORT SETTINGS
 --------------------------------------------------------------*/
 
-extension.importSettings = function () {
+menu.importSettings = function () {
 	if (location.href.indexOf('action=import-settings') !== -1) {
 		satus.render({
 			component: 'modal',
@@ -163,6 +164,6 @@ extension.importSettings = function () {
 					}
 				}
 			}
-		}, extension.skeleton.rendered);
+		}, menu.skeleton.rendered);
 	}
 };

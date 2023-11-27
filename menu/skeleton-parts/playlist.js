@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> PLAYLIST
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.playlist = {
+menu.skeleton.main.layers.section.playlist = {
 	component: 'button',
 	variant: 'playlist',
 	category: true,

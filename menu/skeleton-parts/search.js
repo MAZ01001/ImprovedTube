@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> PLAYLIST
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.search.on.click = {
+menu.skeleton.header.sectionEnd.search.on.click = {
 	component: 'text-field',
 	variant: 'search',
 	focus: true,
@@ -53,7 +54,7 @@ extension.skeleton.header.sectionEnd.search.on.click = {
 				value = this.value.trim();
 
 			if (value.length > 0) {
-				satus.search(value, extension.skeleton, function (results) {
+				satus.search(value, menu.skeleton, function (results) {
 					var search_results = document.querySelector('.search-results'),
 						skeleton = {
 							component: 'modal',

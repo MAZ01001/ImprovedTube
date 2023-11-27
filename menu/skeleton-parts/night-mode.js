@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> NIGHT MODE
 --------------------------------------------------------------*/
 
-extension.skeleton.header.sectionEnd.menu.on.click.nightMode = {
+menu.skeleton.header.sectionEnd.menu.on.click.nightMode = {
 	component: 'button',
 	category: true,
 	on: {

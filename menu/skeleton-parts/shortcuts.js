@@ -5,11 +5,12 @@
 var chrome;
 //@ts-ignore
 var satus;
+var menu;
 /*--------------------------------------------------------------
 >>> SHURTCUTS
 --------------------------------------------------------------*/
 
-extension.skeleton.main.layers.section.shortcuts = {
+menu.skeleton.main.layers.section.shortcuts = {
 	component: 'button',
 	variant: 'shortcuts',
 	category: true,
