@@ -1,3 +1,6 @@
+///<reference path="../../ref.d.ts"/>
+//@ts-check
+'use strict';
 /*--------------------------------------------------------------
 >>> CORE:
 ----------------------------------------------------------------
@@ -12,7 +15,12 @@
 # GLOBAL VARIABLE
 --------------------------------------------------------------*/
 
-var ImprovedTube = {
+/**
+ * @global
+ * @see ImprovedTube in `ref.d.ts`
+ */
+//@ts-ignore
+var ImprovedTube = ImprovedTube ?? {
 	messages: {
 		queue: []
 	},

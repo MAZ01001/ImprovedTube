@@ -1,3 +1,10 @@
+///<reference path="../../ref.d.ts"/>
+//@ts-check
+'use strict';
+//@ts-ignore
+var chrome;
+//@ts-ignore
+var satus;
 /*--------------------------------------------------------------
 >>> ACTIVE FEATURES
 --------------------------------------------------------------*/

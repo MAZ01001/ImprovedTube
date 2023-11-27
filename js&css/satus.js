@@ -1,3 +1,8 @@
+///<reference path="../ref.d.ts"/>
+//@ts-check
+'use strict';
+//@ts-ignore
+var chrome;
 /*--------------------------------------------------------------
 >>> 1. CORE
 ----------------------------------------------------------------
@@ -108,7 +113,13 @@ RGB2HSL	HUE2RGB	 HSL2RGB
 /*--------------------------------------------------------------
 # GLOBAL VARIABLE
 --------------------------------------------------------------*/
-var satus = {
+
+/**
+ * @global
+ * @see satus in `ref.d.ts`
+ */
+//@ts-ignore
+var satus = satus ?? {
 	components: {},
 	events: {
 		data: {}

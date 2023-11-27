@@ -1,3 +1,10 @@
+///<reference path="../../ref.d.ts"/>
+//@ts-check
+'use strict';
+//@ts-ignore
+var chrome;
+//@ts-ignore
+var satus;
 /*--------------------------------------------------------------
 >>> CORE:
 ----------------------------------------------------------------
@@ -21,7 +28,12 @@
 # GLOBAL VARIABLE
 --------------------------------------------------------------*/
 
-var extension = {
+/**
+ * @global
+ * @see extension in `ref.d.ts`
+ */
+//@ts-ignore
+var extension = extension ?? {
 	domReady: false,
 	events: {
 		listeners: {}

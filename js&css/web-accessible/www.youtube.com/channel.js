@@ -18,6 +18,10 @@ ImprovedTube.channelDefaultTab = function (a) {
 			}, true);
 		}
 	}
+///<reference path="../../../ref.d.ts"/>
+//@ts-check
+'use strict';
+var ImprovedTube;
 };
 
 /*------------------------------------------------------------------------------
