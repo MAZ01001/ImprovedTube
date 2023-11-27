@@ -5,7 +5,7 @@
 
 /**
  * Global variable available anywhere except `/js&css/web-accessible`\
- * [Chrome-API](https://developer.chrome.com/docs/extensions/reference/)
+ * [Chrome-API for extensions](https://developer.chrome.com/docs/extensions/reference/)
  */
 declare var chrome: {
 	// TODO add used values and methods for intellisense (auto completion)
@@ -73,9 +73,17 @@ declare var satus: {
 
 	render()
 };
+/**
+ * Global variable available in `/menu`\
+ * Last updated //TODO
+ */
+declare var menu: {
+	/** TODO */
+	skeleton: {}
+};
 
 /**
- * Global variable available in `/js&cs/extension` and `/menu`\
+ * Global variable available in `/js&cs/extension`\
  * Last updated //TODO
  */
 declare var extension: {
@@ -194,7 +202,7 @@ declare var extension: {
 }
 
 /**
- * Global variable available in `/js&cs/web-accessible` (and on youtube page)\
+ * Global variable available in `/js&cs/web-accessible` (and on youtube in dev-console)\
  * Last updated //TODO
  */
 declare var ImprovedTube: {
