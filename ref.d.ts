@@ -1,3 +1,8 @@
+//~ Documentation of all JS globals in this project
+//? see JSDocs: https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html
+//? d.ts files: https://www.typescriptlang.org/docs/handbook/declaration-files/by-example.html
+//? ts testing: https://www.typescriptlang.org/play
+
 /**
  * Global variable available anywhere except `/js&css/web-accessible`\
  * [Chrome-API](https://developer.chrome.com/docs/extensions/reference/)
