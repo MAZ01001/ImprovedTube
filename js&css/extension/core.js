@@ -9,7 +9,6 @@ var satus;
 >>> CORE:
 ----------------------------------------------------------------
 # Global variable
-# Camelize
 # Events
 	# On
 	# Trigger
@@ -51,197 +50,104 @@ var extension = extension ?? {
 
 
 /*--------------------------------------------------------------
-# CAMELIZE
---------------------------------------------------------------*/
-
-extension.camelize = function (string) {
-	var result = '';
-
-	for (var i = 0, l = string.length; i < l; i++) {
-		var character = string[i];
-
-		if (character === '_' || character === '-') {
-			i++;
-
-			result += string[i].toUpperCase();
-		} else {
-			result += character;
-		}
-	}
-
-	return result;
-};
-
-
-/*--------------------------------------------------------------
 # EVENTS
 --------------------------------------------------------------*/
 
-/*--------------------------------------------------------------
-# ON
---------------------------------------------------------------*/
+/**
+ * @see {@linkcode extension.events.on} in `ref.d.ts`
+ * @param {string} type
+ * @param {( (resolve: (value?: any) => void, reject: (reason?: any) => void) => Promise<any> ) | ( (data: any) => any )} listener
+ * @param {{async?: boolean, prepend?: boolean}} [options]
+ */
+extension.events.on = function (type, listener, options) {
+	'use strict';
+	this.listeners[type] ??= [];
 
-extension.events.on = function (type, listener, options = {}) {
-	var listeners = extension.events.listeners;
+	if (options?.async === true) listener = (original => async () => new Promise(original))(listener);
 
-	if (!listeners[type]) {
-		listeners[type] = [];
-	}
-
-	if (options.async === true) {
-		listener = (function (original) {
-			return async function () {
-				return new Promise(original);
-			};
-		})(listener);
-	}
-
-	if (options.prepend === true) {
-		listeners[type].unshift(listener);
-	} else {
-		listeners[type].push(listener);
-	}
+	if (options?.prepend === true) this.listeners[type].unshift(listener);
+	else this.listeners[type].push(listener);
 };
 
-
-/*--------------------------------------------------------------
-# TRIGGER
---------------------------------------------------------------*/
-
+/**
+ * @see {@linkcode extension.events.trigger} in `ref.d.ts`
+ * @param {string} type
+ * @param {any} [data]
+ */
 extension.events.trigger = async function (type, data) {
-	var listeners = extension.events.listeners[type];
-
-	if (listeners) {
-		for (var i = 0, l = listeners.length; i < l; i++) {
-			var listener = listeners[i];
-
-			if (typeof listener === 'function') {
-				if (listener instanceof(async function () {}).constructor === true) {
-					await listener(data);
-				} else {
-					listener(data);
-				}
-			}
-		}
-	}
+	'use strict';
+	for (const listener of this.listeners[type] ?? [])
+		if (typeof listener === 'function') await listener(data);
 };
 
-/*--------------------------------------------------------------
-# INJECT
-----------------------------------------------------------------
-	
---------------------------------------------------------------*/
-
+/**
+ * @see {@linkcode extension.inject} in `ref.d.ts`
+ * @param {string[]} paths
+ * @param {() => any} callback
+ */
 extension.inject = function (paths, callback) {
-	if (paths.length > 0) {
-		var element,
-			path = chrome.runtime.getURL(paths[0]);
+	'use strict';
+	if (paths.length === 0) return callback?.(), undefined;
 
-		if (path.indexOf('.css') !== -1) {
-			element = document.createElement('link');
+	const path = chrome.runtime.getURL(paths[0]);
+	let element;
 
-			element.rel = 'stylesheet';
-			element.href = path;
-		} else {
-			element = document.createElement('script');
+	if (path.endsWith('.css')) {
+		element = document.createElement('link');
 
-			element.src = path;
-		}
+		element.rel = 'stylesheet';
+		element.href = path;
+	} else {
+		element = document.createElement('script');
 
-		element.onload = function () {
-			paths.shift();
-
-			extension.inject(paths, callback);
-		};
-
-		document.documentElement.appendChild(element);
-	} else if (callback) {
-		callback();
+		element.src = path;
 	}
+
+	element.addEventListener('load', () => {
+		paths.shift();
+
+		this.inject(paths, callback);
+	}, { passive: true, once: true });
+
+	document.documentElement.appendChild(element);
 };
-
-/*extension.inject = function (urls, callback) {
-	var threads = urls.length;
-
-	for (var i = 0, l = urls.length; i < l; i++) {
-		var element,
-			url = chrome.runtime.getURL(urls[i]);
-
-		if (url.indexOf('.css') !== -1) {
-			element = document.createElement('link');
-
-			element.rel = 'stylesheet';
-			element.href = url;
-		} else {
-			element = document.createElement('script');
-
-			element.src = url;
-		}
-
-		element.onload = function () {
-			threads--;
-
-			if (threads === 0) {
-				callback();
-			}
-		};
-
-		document.documentElement.appendChild(element);
-	}
-};*/
-
 
 /*--------------------------------------------------------------
 # MESSAGES
-----------------------------------------------------------------
-	Designed for messaging between contexts of extension and
-	website.
---------------------------------------------------------------*/
-
-/*--------------------------------------------------------------
-# CREATE ELEMENT
 --------------------------------------------------------------*/
 
 extension.messages.create = function () {
-	this.element = document.createElement('div');
+	this.element ??= document.createElement('div');
 
 	this.element.id = 'it-messages-from-extension';
-
 	this.element.style.display = 'none';
 
 	document.documentElement.appendChild(this.element);
 };
 
-/*--------------------------------------------------------------
-# LISTENER
---------------------------------------------------------------*/
-
 extension.messages.listener = function () {
-	document.addEventListener('it-message-from-extension--readed', function () {
-		extension.messages.queue.pop();
-
-		if (extension.messages.queue.length > 0) {
-			extension.messages.element.textContent = message;
-
+	'use strict';
+	const fnc = () => {
+		'use strict';
+		this.queue.shift();
+		if (this.queue.length > 0) {
+			this.element?.replaceChildren(this.queue[0]);
 			document.dispatchEvent(new CustomEvent('it-message-from-extension'));
 		}
-	});
+	};
+	document.removeEventListener('it-message-from-extension--readed', fnc);
+	document.addEventListener('it-message-from-extension--readed', fnc, { passive: true });
 };
 
-/*--------------------------------------------------------------
-# SEND
---------------------------------------------------------------*/
-
+/**
+ * @see {@linkcode extension.messages.send} in `ref.d.ts`
+ * @param {string | Object} message
+ */
 extension.messages.send = function (message) {
-	if (typeof message === 'object') {
-		message = JSON.stringify(message);
-	}
-
+	if (typeof message === 'object') message = JSON.stringify(message);
 	this.queue.push(message);
-
 	if (this.queue.length === 1) {
-		this.element.textContent = message;
-
+		this.element?.replaceChildren(message);
 		document.dispatchEvent(new CustomEvent('it-message-from-extension'));
 	}
 };
@@ -251,87 +157,54 @@ extension.messages.send = function (message) {
 # STORAGE
 --------------------------------------------------------------*/
 
-/*--------------------------------------------------------------
-# GET
---------------------------------------------------------------*/
-
+/**
+ * @see {@linkcode extension.storage.get} in `ref.d.ts`
+ * @param {string} key
+ * @returns {any}
+ */
 extension.storage.get = function (key) {
-	if (key.indexOf('/') === -1) {
-		return this.data[key];
-	} else {
-		var target = this.data,
-			path = key.split('/').filter(function (value) {
-				return value != '';
-			});
-
-		for (var i = 0, l = key.length; i < l; i++) {
-			var part = key[i];
-
-			if (target.hasOwnProperty(part)) {
-				target = target[part];
-			} else {
-				return undefined;
-			}
-		}
+	if (!key.includes('/')) return this.data[key];
+	let target = this.data;
+	for (const part of key.split('/')) {
+		if (part !== '' && target.hasOwnProperty(part)) target = target[part];
+		else return undefined;
 	}
+	return target;
 };
 
-/*--------------------------------------------------------------
-# LISTENER
---------------------------------------------------------------*/
-
 extension.storage.listener = function () {
-	chrome.storage.onChanged.addListener(function (changes) {
-		for (var key in changes) {
-			var value = changes[key].newValue,
-				camelized_key = extension.camelize(key);
+	chrome.storage.onChanged.addListener(changes => {
+		for (const key in changes) {
+			const value = changes[key].newValue,
+				camelizedKey = satus.toCamelCase(key);
 
-			extension.storage.data[key] = value;
+			this.data[key] = value;
+			document.documentElement.setAttribute('it-' + satus.toDashCase(key), value);
 
-			document.documentElement.setAttribute('it-' + key.replace(/_/g, '-'), value);
+			if (typeof extension.features[camelizedKey] === 'function') extension.features[camelizedKey](true);
 
-			if (typeof extension.features[camelized_key] === 'function') {
-				extension.features[camelized_key](true);
-			}
-
-			extension.events.trigger('storage-changed', {
-				key,
-				value
-			});
-
-			extension.messages.send({
-				action: 'storage-changed',
-				camelizedKey: camelized_key,
-				key,
-				value
-			});
+			extension.events.trigger('storage-changed', { key, value });
+			extension.messages.send({ action: 'storage-changed', camelizedKey, key, value });
 		}
 	});
 };
 
-/*--------------------------------------------------------------
-# LOAD
---------------------------------------------------------------*/
-
+/**
+ * @see {@linkcode extension.storage.load} in `ref.d.ts`
+ * @param {() => void} [callback]
+ */
 extension.storage.load = function (callback) {
-	chrome.storage.local.get(function (items) {
-		for (var key in items) {
-			var value = items[key];
+	chrome.storage.local.get(null, items => {
+		for (const key in items) {
+			const value = items[key];
 
-			extension.storage.data[key] = value;
-
-			document.documentElement.setAttribute('it-' + key.replace(/_/g, '-'), value);
+			this.data[key] = value;
+			document.documentElement.setAttribute('it-' + satus.toDashCase(key), value);
 		}
 
 		extension.events.trigger('storage-loaded');
+		extension.messages.send({ action: 'storage-loaded', storage: items });
 
-		extension.messages.send({
-			action: 'storage-loaded',
-			storage: items
-		});
-
-		if (callback) {
-			callback(extension.storage.data);
-		}
+		callback?.();
 	});
 };
