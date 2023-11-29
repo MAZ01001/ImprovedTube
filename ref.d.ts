@@ -10,19 +10,21 @@
 declare var chrome: {
 	// TODO add used values and methods for intellisense (auto completion)
 	storage: {
-		onChanged: {}
+		onChanged: {
+			addListener(callback: (changes: {}, areaName: string) => void):void;
+		};
 		local: {
 			get<T extends string>(keys?: T, callback?: (items: Record<T, any>) => void): Promise<{}>;
 			get(keys?: string | string[] | {} | null, callback?: (items: {}) => void): Promise<{}>;
 			set(items: {}, callback?: () => void): Promise<void>;
 			remove(keys: string | string[], callback?: () => void): Promise<void>;
-		}
-	}
+		};
+	};
 	runtime: {
 		getURL(url: string): string;
 		sendMessage(message: any, options?: { includeTlsChannelId?: boolean; }, callback?: (response: any) => void): Promise<any>;
 		sendMessage(extensionId: string, message: any, options?: { includeTlsChannelId?: boolean; }, callback?: (response: any) => void): Promise<any>;
-	}
+	};
 };
 
 /**
@@ -70,9 +72,87 @@ declare var satus: {
 	 * @returns {string} the converted string
 	 */
 	toDashCase(str: string): string;
-
-	render()
+	/**
+	 * Sorts {@linkcode array} by numerical value\
+	 * Mutates the array and returns a reference to the same array
+	 * @param asc - if `true` uses ascending order (default) and when `false` descending order
+	 */
+	sort(array: number[], asc?: boolean): number[];
+	/**
+	 * Sorts {@linkcode array} by locale alphanumerical value (via {@linkcode String.prototype.localeCompare})\
+	 * Mutates the array and returns a reference to the same array
+	 * @param asc - if `true` uses ascending order (default) and when `false` descending order
+	 */
+	sort(array: string[], asc?: boolean): string[];
+	/**
+	 * Sorts {@linkcode array} for {@linkcode property} by numerical or locale alphanumerical (via {@linkcode String.prototype.localeCompare}) value\
+	 * Mutates the array and returns a reference to the same array
+	 * @param asc - if `true` uses ascending order (default) and when `false` descending order
+	 */
+	sort<T extends number | string, P extends string | number | symbol>(array: (Record<any,any> & {[K in P]: T;})[], asc: boolean | undefined, property: P): (Record<any,any> & {[K in P]: T;})[];
+	/**
+	 * Copy every key value pair from {@linkcode data} to the dataset of {@linkcode element}\
+	 * If any value of {@linkcode data} is a function it gets called and the result is used instead
+	 */
+	data(element: HTMLElement, data: {[K in string]: string | (() => string)}): void;
+	/**
+	 * Checks if {@linkcode t} is set (not `null` or `undefined`)
+	 * @deprecated use `x == null` and optional chaining `x?.property ?? default` / `x.fnc?.()` / `x.arr?.[50]` instead
+	 */
+	isset(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is a function
+	 * @deprecated use `typeof t === 'function'` instead
+	 */
+	isFunction(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is a string
+	 * @deprecated use `typeof t === 'string'` instead
+	 */
+	isString(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is a boolean
+	 * @deprecated use `typeof t === 'boolean'` instead
+	 */
+	isBoolean(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is a number and not `NaN`
+	 * @deprecated use `typeof t === 'number' && !Number.isNaN(t)` instead
+	 */
+	isNumber(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is an array
+	 * @deprecated use `Array.isArray(t)` instead
+	 */
+	isArray(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is a nodeList
+	 * @deprecated use `t instanceof NodeList` instead
+	 */
+	isNodeList(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is an object and not `null`
+	 * @deprecated use `t instanceof Object && t != null` instead
+	 */
+	isObject(t: any): boolean;
+	/**
+	 * Checks if {@linkcode t} is an element or a document
+	 * @deprecated use `t instanceof Element || t instanceof Document` instead
+	 */
+	isElement(t: any): boolean;
+	/**
+	 * Logs {@linkcode args} to console
+	 * @deprecated use `console.log(args)` instead
+	 */
+	log(...args: any): void;
+	/**
+	 * Appends {@linkcode child} to {@linkcode parent} (or {@linkcode HTMLBodyElement}) and returns a reference to it
+	 * @deprecated use `(parent ?? document.body).appendChild(child)` or even better `container.append('string', child)` instead
+	 */
+	append(child: Node | Element, parent?: ParentNode | Element): Node | Element;
+	// TODO ...
 };
+
 /**
  * Global variable available in `/menu`\
  * Last updated //TODO
@@ -80,6 +160,7 @@ declare var satus: {
 declare var menu: {
 	/** TODO */
 	skeleton: {}
+	// TODO ...
 };
 
 /**
@@ -189,8 +270,29 @@ declare var extension: {
 			// TODO {... 'video ID': { title: any } }
 			watched?: {};
 		};
-		/** TODO */
-		get(key: string): string | boolean;
+		/**
+		 * Get a value from {@linkcode extension.storage.data} or `undefined` if it doesn't exist (can be a path (property chain) with `/` as seperator)
+		 * @deprecated {@linkcode extension.storage.data} should be accessed directly
+		 * @example
+		 * extension.storage.get('blacklist/channels');
+		 * // same as
+		 * extension.storage.data.blacklist?.channels;
+		 */
+		get(key: string): any;
+		/**
+		 * Adds a listener to {@linkcode chrome.storage.onChanged}\
+		 * which does, for each change (key and new value of change):\
+		 * Updates {@linkcode extension.storage.data} and the HTML root to the new value\
+		 * If a function with same name as the key (converted to camel case) exists in {@linkcode extension.features} it gets called with `true`\
+		 * Calls {@linkcode extension.events.trigger} and {@linkcode extension.messages.send} with action `storage-changed` and the key and value pair
+		 */
+		listener(): void;
+		/**
+		 * Loads all entries in {@linkcode chrome.storage.local} to {@linkcode extension.storage.data} and HTML root,
+		 * calls {@linkcode extension.events.trigger} and {@linkcode extension.messages.send} with action `storage-loaded` and the original items,
+		 * and if {@linkcode callback} is set calls it after everything is loaded
+		 */
+		load(callback?: () => void): void;
 	};
 	/**
 	 * appends multiple JS and CSS files to {@linkcode document.documentElement}\
@@ -199,6 +301,7 @@ declare var extension: {
 	 * @param callback - a function called after all {@linkcode paths} are injected and loaded
 	 */
 	inject(paths: string[], callback: () => any): void;
+	// TODO ...
 }
 
 /**
@@ -512,4 +615,7 @@ declare var ImprovedTube: {
 	playerFitToWinButton(): void;
 	/** @deprecated has no implementation */
 	whenPaused?: () => void;
+	// TODO ...
 };
+
+// FAV [strict-mode for every function] search /(function ?\([^)]*\) ?\{|\([^)]*\) ?=> ?\{)(\r?\n?[ \t]*)(\S)(?!use strict)/gi reaplace "$1$2'use strict';$2$3"
