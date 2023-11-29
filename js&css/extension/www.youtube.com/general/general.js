@@ -151,13 +151,8 @@ extension.features.collapseOfSubscriptionSections = function (event) {
 --------------------------------------------------------------*/
 
 extension.features.onlyOnePlayerInstancePlaying = function () {
-	if (extension.storage.get('only_one_player_instance_playing') === true) {
-		var videos = document.querySelectorAll('video');
-
-		for (var i = 0, l = videos.length; i < l; i++) {
-			videos[i].pause();
-		}
-	}
+	if (extension.storage.get('only_one_player_instance_playing') !== true) return;
+	for (const video of document.querySelectorAll('video')) video.pause();
 };
 
 
@@ -167,33 +162,20 @@ extension.features.onlyOnePlayerInstancePlaying = function () {
 
 extension.features.addScrollToTop = function (event) {
 	if (event instanceof Event) {
-		if (window.scrollY > window.innerHeight / 2) {
-			document.documentElement.setAttribute('it-scroll-to-top', 'true');
-		} else {
-			document.documentElement.removeAttribute('it-scroll-to-top');
-		}
+		if (window.scrollY > window.innerHeight * .5) document.documentElement.setAttribute('it-scroll-to-top', 'true');
+		else document.documentElement.removeAttribute('it-scroll-to-top');
 	} else {
 		if (extension.storage.get('add_scroll_to_top') === true) {
 			this.addScrollToTop.button = satus.render({
 				component: 'div',
 				id: 'it-scroll-to-top',
-				on: {
-					click: function () {
-						window.scrollTo(0, 0);
-					}
-				},
-
+				on: { click: () => window.scroll(0, 0) },
 				svg: {
 					component: 'svg',
-					attr: {
-						'viewBox': '0 0 24 24'
-					},
-
+					attr: { 'viewBox': '0 0 24 24' },
 					path: {
 						component: 'path',
-						attr: {
-							'd': 'M13 19V7.8l4.9 5c.4.3 1 .3 1.4 0 .4-.5.4-1.1 0-1.5l-6.6-6.6a1 1 0 0 0-1.4 0l-6.6 6.6a1 1 0 1 0 1.4 1.4L11 7.8V19c0 .6.5 1 1 1s1-.5 1-1z'
-						}
+						attr: { 'd': 'M13 19V7.8l4.9 5c.4.3 1 .3 1.4 0 .4-.5.4-1.1 0-1.5l-6.6-6.6a1 1 0 0 0-1.4 0l-6.6 6.6a1 1 0 1 0 1.4 1.4L11 7.8V19c0 .6.5 1 1 1s1-.5 1-1z' }
 					}
 				}
 			});

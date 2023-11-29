@@ -167,9 +167,7 @@ ImprovedTube.subtitlesLanguage = function () {
             button = this.elements.player_subtitles_button;
 
         if (player && player.getOption && button && button.getAttribute('aria-pressed') === 'true') {
-            var tracklist = this.elements.player.getOption('captions', 'tracklist', {
-                includeAsr: true
-            });
+            var tracklist = this.elements.player.getOption('captions', 'tracklist', { includeAsr: true });
 
             var matchTrack = false;
             for (var i =0, l = tracklist.length; i<l; i++){
@@ -455,8 +453,10 @@ ImprovedTube.playerQuality = function () {
 					array.push(resolution[label.indexOf(elem)]); return array;
 					}, []);
 
-				quality = closest (resolution[label.indexOf(quality)], availableresolutions);
-				quality = label[resolution.indexOf(quality)];
+				quality = label[resolution.indexOf(closest(
+					resolution[label.indexOf(quality)],
+					availableresolutions
+				))];
 			}
 
 			player.setPlaybackQualityRange(quality);
@@ -676,31 +676,39 @@ ImprovedTube.playerRotateButton = function () {
 FIT-TO-WIN BUTTON
 ------------------------------------------------------------------------------*/
 ImprovedTube.playerFitToWinButton = function () {
-	if (this.storage.player_fit_to_win_button === true && (/watch\?/.test(location.href))) {
-		const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="ftw-icon">
-		<path d="M21 3 9 15"/><path d="M12 3H3v18h18v-9"/><path d="M16 3h5v5"/><path d="M14 15H9v-5"/></svg>`;
-
-    let tempContainer = document.createElement("div");
-    tempContainer.innerHTML = svgMarkup;
-    const svg = tempContainer.firstChild;
-		this.createPlayerButton({
-			id: 'it-fit-to-win-player-button',
-			child: svg,
-			opacity: 0.85,
-			position: "right",
-			onclick: function () {
-				let previousSize = ImprovedTube.storage.player_size === "fit_to_window" ? "do_not_change" : (ImprovedTube.storage.player_size ?? "do_not_change");
-				let isFTW = document.querySelector("html").getAttribute("it-player-size") === "fit_to_window"
-				if (isFTW) {
-					document.querySelector("html").setAttribute("it-player-size", previousSize);
-				} else {
-					document.querySelector("html").setAttribute("it-player-size", "fit_to_window");
-				}
-				window.dispatchEvent(new Event("resize"));
-			},
-			title: 'Fit To Window'
-		});
-	} 
+	'use strict';
+	if (this.storage.player_fit_to_win_button !== true || location.pathname !== '/watch') return;
+	const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+		path_1 = document.createElementNS('http://www.w3.org/2000/svg', 'path'),
+		path_2 = document.createElementNS('http://www.w3.org/2000/svg', 'path'),
+		path_3 = document.createElementNS('http://www.w3.org/2000/svg', 'path'),
+		path_4 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	svg.setAttribute('width', '24');
+	svg.setAttribute('height', '24');
+	svg.setAttribute('viewBox', '0 0 24 24');
+	svg.setAttribute('fill', 'none');
+	svg.setAttribute('stroke', 'currentColor');
+	svg.setAttribute('stroke-width', '2');
+	svg.setAttribute('id', 'ftw-icon');
+	path_1.setAttribute('d', 'M21 3 9 15');
+	path_2.setAttribute('d', 'M12 3H3v18h18v-9');
+	path_3.setAttribute('d', 'M16 3h5v5');
+	path_4.setAttribute('d', 'M14 15H9v-5');
+	svg.append(path_1,path_2,path_3,path_4);
+	this.createPlayerButton({
+		id: 'it-fit-to-win-player-button',
+		child: svg,
+		opacity: 0.85,
+		position: "right",
+		onclick: function () {
+			'use strict';
+			if (document.documentElement.getAttribute('it-player-size') === 'fit_to_window')
+				document.documentElement.setAttribute('it-player-size', ImprovedTube.storage.player_size === 'fit_to_window' ? 'do_not_change' : (ImprovedTube.storage.player_size ?? 'do_not_change'));
+			else document.documentElement.setAttribute('it-player-size', 'fit_to_window');
+			window.dispatchEvent(new Event('resize'));
+		},
+		title: 'Fit To Window'
+	});
 };
 /*------------------------------------------------------------------------------
 HAMBURGER MENU
@@ -773,7 +781,7 @@ ImprovedTube.playerPopupButton = function () {
 			child: svg,
 			opacity: 0.8,
 			onclick: function () {
-				"use strict";
+				'use strict';
 				const ytPlayer = ImprovedTube.elements.player;
 
 				ytPlayer.pauseVideo();
@@ -787,12 +795,12 @@ ImprovedTube.playerPopupButton = function () {
 					);
 				if(popup && listMatch){
 					//! If the video is not in the playlist or not within the first 200 entries, then it automatically selects the first video in the list.
-					popup.addEventListener('load', function () {
-						"use strict";
+					popup.addEventListener('DOMContentLoaded', function () {
+						'use strict';
 						//~ check if the video ID in the link of the video title matches the original video ID in the URL and if not remove the playlist from the URL (reloads the page).
 						const videoLink = this.document.querySelector('div#player div.ytp-title-text>a[href]');
 						if (videoLink && videoLink.href.match(ImprovedTube.regex.video_id)[1] !== videoID) this.location.search = this.location.search.replace(/(\?)list=[^&]+&|&list=[^&]+/, '$1');
-					}, {passive: true, once: true});
+					}, { passive: true, once: true });
 				}
 				//~ change focused tab to URL-less popup
 				ImprovedTube.messages.send({
@@ -822,35 +830,32 @@ ImprovedTube.playerSDR = function () {
 Hide controls
 ------------------------------------------------------------------------------*/
 ImprovedTube.playerControls = function (pause=false) {
-    var player = this.elements.player;   if (player) {
+	var player = this.elements.player;
+	if (player) {
 		let hide = this.storage.player_hide_controls;
-        if (hide === 'always') {
-            player.hideControls();
-        } else if(hide === 'off') {
-            player.showControls();
-        } else if(hide === 'when_paused') {
-		   if(this.elements.video.paused){
-	       player.hideControls( );
+		if (hide === 'always') {
+			player.hideControls();
+		} else if(hide === 'off') {
+			player.showControls();
+		} else if(hide === 'when_paused') {
+			if(this.elements.video.paused){
+			player.hideControls();
 
-	  ImprovedTube.elements.player.parentNode.addEventListener('mouseenter', function () {
-	  player.showControls();});
-	  ImprovedTube.elements.player.parentNode.addEventListener('mouseleave', function () {
-      player.hideControls( );});
+			ImprovedTube.elements.player.parentNode.addEventListener('mouseenter', () => { player.showControls(); });
+			ImprovedTube.elements.player.parentNode.addEventListener('mouseleave', () => { player.hideControls(); });
 
+			ImprovedTube.elements.player.parentNode.onmousemove = (() => {
+				let onmousestop = () => player.hideControls(),
+					thread;
 
-		ImprovedTube.elements.player.parentNode.onmousemove = (function() {
-			let onmousestop = function() {
-				player.hideControls( );
-			}, thread;
-
-			return function() {
-			  player.showControls();
-			  clearTimeout(thread);
-			  thread = setTimeout(onmousestop, 1000);
-			};
-		  })();
-	   }} else { player.showControls();  }
-}
+				return () => {
+					player.showControls();
+					clearTimeout(thread);
+					thread = setTimeout(onmousestop, 1000);
+				};
+			})();
+		}} else { player.showControls();  }
+	}
 };
 /*------------------------------------------------------------------------------
 CUSTOM MINI-PLAYER

@@ -8,39 +8,44 @@ var ImprovedTube;
 ImprovedTube.messages.create();
 ImprovedTube.messages.listener();
 
+//? why was this added as a comment; what was it for; can this be deleted?
 /*
-//document.body.removeChild(document.body.getElementsByTagName("script")[1]);
- var scriptElement = document.body.getElementsByTagName("script")[1] || false;
- if (scriptElement && scriptElement.textContent) {
-    // Use regex to modify the JSON content while preserving the rest
-    var updatedContent = scriptElement.textContent.replace(/(^[^{]*)(\{.*?})([^}]*$)/gs, function(match, before, json, after) {
-      var parsedJSON = JSON.parse(json);
-      delete parsedJSON.playerAds;
-      delete parsedJSON.adPlacements;
-      delete parsedJSON.adSlots;
-	  console.log(parsedJSON.videoDetails);
-      var updatedJSON = JSON.stringify(parsedJSON);
-      return before + updatedJSON + after;
-    });
-    scriptElement.textContent = updatedContent;
+//// document.body.removeChild(document.body.getElementsByTagName("script")[1]);
+//~ parses the largest "{}" from the second script element in the body found (if any),
+//~ removes "playerAds", "adPlacements", and "adSlots", logs "videoDetails" to console,
+//~ and converts it back to a string and inserts it back to the script element
+const scriptElement = document.body.getElementsByTagName("script")[1];
+if (scriptElement?.textContent != null) {
+	//~ Use regex to modify the JSON content while preserving the rest
+	scriptElement.textContent = scriptElement.textContent.replace(/(^[^{]*)(\{.*?})([^}]*$)/gs, (match, before, json, after) => {
+		'use strict';
+		const parsedJSON = (() => {
+			'use strict';
+			try { return JSON.parse(json); }
+			catch (error) {
+				if(error instanceof SyntaxError) return null;
+				else throw error;
+			}
+		})();
+		if(parsedJSON == null) return match;
+		delete parsedJSON.playerAds;
+		delete parsedJSON.adPlacements;
+		delete parsedJSON.adSlots;
+		console.log("%O", parsedJSON.videoDetails);
+		return before + JSON.stringify(parsedJSON) + after;
+	});
 }
 */
 
-if (document.body) {
-	ImprovedTube.childHandler(document.body);
-}
+if (document.body) ImprovedTube.childHandler(document.body);
 
-ImprovedTube.observer = new MutationObserver(function (mutationList) {
-	for (var i = 0, l = mutationList.length; i < l; i++) {
-		var mutation = mutationList[i];
-
+//~ Observe entire HTML (triggers after every node added or removed)
+new MutationObserver(function (mutationList) {
+	'use strict';
+	for (const mutation of mutationList) {
 		if (mutation.type === 'childList') {
-			for (var j = 0, k = mutation.addedNodes.length; j < k; j++) {
-				ImprovedTube.childHandler(mutation.addedNodes[j]);
-			}
-			for (const node of mutation.removedNodes){
-				if(node.nodeName === 'BUTTON' && node.id === 'it-popup-playlist-button') ImprovedTube.playlistPopupUpdate();
-			}
+			for (const addedNode of mutation.addedNodes) ImprovedTube.childHandler(addedNode);
+			for (const removedNode of mutation.removedNodes) ImprovedTube.childHandler(removedNode, true);
 		}
 	}
 }).observe(document.documentElement, {
@@ -49,13 +54,12 @@ ImprovedTube.observer = new MutationObserver(function (mutationList) {
 	subtree: true
 });
 
+//~ Observe entire HTML (triggers after every node added, removed, or modified)
+//~ Only observes attribute changes for href attributes
 new MutationObserver(function (mutationList) {
-	for (var i = 0, l = mutationList.length; i < l; i++) {
-		var mutation = mutationList[i];
-
-		if (mutation.type === 'attributes') {
-			ImprovedTube.channelDefaultTab(mutation.target);
-		}
+	'use strict';
+	for (const mutation of mutationList) {
+		if (mutation.type === 'attributes' && mutation.target instanceof HTMLAnchorElement) ImprovedTube.channelDefaultTab(mutation.target);
 	}
 }).observe(document.documentElement, {
 	attributeFilter: ['href'],
@@ -63,7 +67,7 @@ new MutationObserver(function (mutationList) {
 	childList: true,
 	subtree: true
 });
-
+// TODO ↓
 ImprovedTube.init = function () {
 	window.addEventListener('yt-page-data-updated', function () {
 		ImprovedTube.pageType();
@@ -106,8 +110,8 @@ document.addEventListener('yt-navigate-finish', function () {
 	ImprovedTube.channelPlayAllButton();
 });
 
-document.addEventListener('yt-page-data-updated', function (event) {
-	if (document.documentElement.dataset.pageType === 'video' && /[?&]list=([^&]+).*$/.test(location.href)) {
+document.addEventListener('yt-page-data-updated', function () {
+	if (document.documentElement.dataset.pageType === 'video' && ImprovedTube.regex.playlist_id.test(location.search)) {
 		ImprovedTube.playlistRepeat();
 		ImprovedTube.playlistShuffle();
 		ImprovedTube.playlistReverse();
@@ -115,7 +119,7 @@ document.addEventListener('yt-page-data-updated', function (event) {
 	ImprovedTube.playlistPopupUpdate();
 });
 
-window.addEventListener('load', function () {
+window.addEventListener('DOMContentLoaded', function () {
 	ImprovedTube.elements.masthead = {
 		start: document.querySelector('ytd-masthead #start'),
 		end: document.querySelector('ytd-masthead #end'),

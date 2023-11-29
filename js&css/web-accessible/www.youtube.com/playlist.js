@@ -151,7 +151,7 @@ ImprovedTube.playlistShuffle = function () {
  * @returns {HTMLButtonElement | null} the playlist popup button to insert into the DOM or `null` if the {@linkcode playlistID} is `null`
  */
 ImprovedTube.playlistPopupCreateButton = function (playlistID, altButtonStyle, checkVideo) {
-	"use strict";
+	'use strict';
 	if (playlistID == null) return null;
 	const button = document.createElement('button'),
 		svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
@@ -165,7 +165,7 @@ ImprovedTube.playlistPopupCreateButton = function (playlistID, altButtonStyle, c
 	button.addEventListener(
 		'click',
 		(checkVideo ?? false) ? function (event) {
-			"use strict";
+			'use strict';
 			const videoURL = ImprovedTube.elements.player?.getVideoUrl();
 			if (videoURL != null && ImprovedTube.regex.video_id.test(videoURL)) {
 				ImprovedTube.elements.player.pauseVideo();
@@ -174,8 +174,8 @@ ImprovedTube.playlistPopupCreateButton = function (playlistID, altButtonStyle, c
 					popup = window.open(`${location.protocol}//www.youtube.com/embed/${videoID}?autoplay=${(ImprovedTube.storage.player_autoplay ?? true) ? '1' : '0'}&start=${videoURL.match(ImprovedTube.regex.video_time)?.[1] ?? '0'}&list=${listID}`, '_blank', `directories=no,toolbar=no,location=no,menubar=no,status=no,titlebar=no,scrollbars=no,resizable=no,width=${ImprovedTube.elements.player.offsetWidth ?? innerWidth},height=${ImprovedTube.elements.player.offsetHeight ?? innerHeight}`);
 				//! If the video is not in the playlist or not within the first 200 entries, then it automatically selects the first video in the list.
 				//! But this is okay since this button is mainly for the playlist, not the video (see the video popup button in player.js).
-				popup.addEventListener('load', function () {
-					"use strict";
+				popup.addEventListener('DOMContentLoaded', function () {
+					'use strict';
 					//~ check if the video ID in the link of the video title matches the original video ID in the URL and if not reload as a videoseries/playlist (without the videoID and start-time).
 					const videoLink = this.document.querySelector('div#player div.ytp-title-text>a[href]');
 					if (videoLink && videoLink.href.match(ImprovedTube.regex.video_id)[1] !== videoID) this.location.href = `${location.protocol}//www.youtube.com/embed/videoseries?autoplay=${(ImprovedTube.storage.player_autoplay ?? true) ? '1' : '0'}&list=${listID}`;
@@ -189,7 +189,7 @@ ImprovedTube.playlistPopupCreateButton = function (playlistID, altButtonStyle, c
 				title: document.title
 			});
 		} : function (event) {
-			"use strict";
+			'use strict';
 			window.open(`${location.protocol}//www.youtube.com/embed/videoseries?autoplay=${(ImprovedTube.storage.player_autoplay ?? true) ? '1' : '0'}&list=${this.dataset.list}`, '_blank', `directories=no,toolbar=no,location=no,menubar=no,status=no,titlebar=no,scrollbars=no,resizable=no,width=${innerWidth},height=${innerHeight}`);
 			//~ change focused tab to URL-less popup
 			ImprovedTube.messages.send({
@@ -222,7 +222,7 @@ ImprovedTube.playlistPopupCreateButton = function (playlistID, altButtonStyle, c
  * - called from {@linkcode ImprovedTube.ytElementsHandler} and {@linkcode ImprovedTube.hrefObserver} when DOM changes (somewhat related to playlist renderers)
  */
 ImprovedTube.playlistPopupUpdate = function () {
-	"use strict";
+	'use strict';
 	if (!(this.storage.playlist_popup ?? false)) return;
 
 	const playlistID = location.search.match(this.regex.playlist_id)?.[1],

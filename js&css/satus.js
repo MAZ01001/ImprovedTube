@@ -6,39 +6,49 @@ var chrome;
 /*--------------------------------------------------------------
 >>> 1. CORE
 ----------------------------------------------------------------
-# GLOBAL VARIABLE:
-# BASICS: camelize(string)	 snakelize(string)
-			sort(array, order, property)
-			data(element, data)
-			isset(target, is_object)
-			isFunction(target)
-			is_________target) Array		Object Boolean
-						Element NodeList Number String
-			log()
-# DOM: append(child, parent)
-		setAttributes(element, attributes)					=attr()
-		createElement(tagName, componentName, namespaceURI)
-		empty(element, exclude = [])
-		elementIndex(element)
-
-# CSS: css(element, property)
-		addClass(element, className)							 =class()
-		satus.style(element, object)
-		getAnimationDuration(element)
-
-# CRYPTION (async): decrypt(text, password)
-					 encrypt(text, password)
+# GLOBAL VARIABLE
+# BASICS:
+	toCamelCase(string)
+	toSnakeCase(string)
+	toDashCase(string)
+	sort(array, order, property)
+	data(element, data)
+	isset(t)
+	is___(t)
+		Function
+		String
+		Boolean
+		Number
+		Array
+		NodeList
+		Object
+		Element
+	log(args)
+# DOM:
+	append(child, parent)
+	setAttributes(element, attributes) = attr()
+	createElement(tagName, componentName, namespaceURI)
+	empty(element, exclude = [])
+	elementIndex(element)
+# CSS:
+	css(element, property)
+	addClass(element, className) = class()
+	satus.style(element, object)
+	getAnimationDuration(element)
+# CRYPTION (async):
+	decrypt(text, password)
+	encrypt(text, password)
 
 Events.on(type, handler)
 Events.trigger(type, data)
 
 fetch(url, success, error, type)
- getProperty(object, string)
+getProperty(object, string)
 indexOf(child, parent)
- toIndex(index, child, parent)
+toIndex(index, child, parent)
 
-
-# ON: on(element, listeners)
+# ON:
+	on(element, listeners)
 
 parentify(parentObject, exclude)
 prepend(child, parent)
@@ -47,29 +57,28 @@ remove(child, parent)
 render(skeleton, container, property, childrenOnly, prepend, skip_children)
 
 # STORAGE
-storage.clear(callback)
-storage.get(key, callback)
-storage.import(keys, callback)
-storage.remove(key, callback)
-storage.set(key, value, callback)
-storage.onchanged = function(callback)
+	storage.clear(callback)
+	storage.get(key, callback)
+	storage.import(keys, callback)
+	storage.remove(key, callback)
+	storage.set(key, value, callback)
+	storage.onchanged = function(callback)
 
 last(variable)
 
 # LOCALIZATION
-locale.get(string)
-locale.import = function(code, callback, path)
-	//satus.locale.import(url, onload, onsuccess);
+	locale.get(string)
+	locale.import = function(code, callback, path)
 
 text(element, value)
 
 // We always try to run values as functions to allow for dynamic content
 // for example menu/skeleton-parts/analyzer.js datasets: is being generated
 // from stored staticstics on the spot.
+
 ----------------------------------------------------------------
-
 >>> 2. COMPONENTS
-
+----------------------------------------------------------------
 components.modal(component, skeleton)
 components.modal.confirm
 components.grid
@@ -87,27 +96,45 @@ components.divider()	base(component)	section
 			checkbox
 components.switch
 components.switch.flip
+
 ----------------------------------------------------------------
 >>> COLOR:
+----------------------------------------------------------------
 String to array
 RGB2HSL	HUE2RGB	 HSL2RGB
+
 ----------------------------------------------------------------
 >>> USER
+----------------------------------------------------------------
 # HARDWARE and SOFTWARE values
-	# OS: Name	Bitness
-	# Browser:	Name	Version	Platform
-				Manifest	Languages
-				Cookies
-				Flash	Java	Audio
-				Video WebGL
-	# Device:	 Screen
-				RAM	GPU	Cores
-				Touch	Connection
+	# OS:
+		Name
+		Bitness
+	# Browser:
+		Name
+		Version
+		Platform
+		Manifest
+		Languages
+		Cookies
+		Flash
+		Java
+		Audio
+		Video
+		WebGL
+	# Device:
+		Screen
+		RAM
+		GPU
+		Cores
+		Touch
+		Connection
+
 ----------------------------------------------------------------
 >>> SEARCH
+----------------------------------------------------------------
 // TO-DO or integrate with JS search libs
 --------------------------------------------------------------*/
-
 
 
 /*--------------------------------------------------------------
@@ -132,155 +159,93 @@ var satus = satus ?? {
 		type: 'extension'
 	}
 };
+
 /*--------------------------------------------------------------
 # BASICS
 --------------------------------------------------------------*/
-/*--CAMELIZE--------------------------------------------------*/
-satus.camelize = function(string) {
-	var result = '';
-	for (var i = 0, l = string.length; i < l; i++) {
-		var character = string[i];
 
-		if (character === '_' || character === '-') {
-			i++;
+/**
+ * @see {@linkcode satus.toCamelCase} in `ref.d.ts`
+ * @param {string} str
+ * @returns {string}
+ */
+satus.toCamelCase = str => str.toLowerCase().replace(/[_-](.|$)/gym, (m, next, i) => i === 0 || i + 1 === str.length ? next ?? '' : next.toUpperCase() );
 
-			result += string[i].toUpperCase();
-		} else {
-			result += character;
-		}
+/**
+ * @see {@linkcode satus.toSnakeCase} in `ref.d.ts`
+ * @param {string} str
+ * @returns {string}
+ */
+satus.toSnakeCase = str => str.replace(/[A-Z-]/gym, (char, i) => (i === 0 || i + 1 === str.length ? '' : '_') + (char === '-' ? '' : char.toLowerCase()));
+
+/**
+ * @see {@linkcode satus.toDashCase} in `ref.d.ts`
+ * @param {string} str
+ * @returns {string}
+ */
+satus.toDashCase = str => str.replace(/[A-Z_]/gym, (char, i) => (i === 0 || i + 1 === str.length ? '' : '-') + (char === '_' ? '' : char.toLowerCase()));
+
+/**
+ * @see {@linkcode satus.sort} in `ref.d.ts`
+ * @param {any[]} array
+ * @param {boolean} [asc]
+ * @param {string | number | symbol} [property]
+ * @returns {any[]}
+ */
+satus.sort = (array, asc, property) => {
+	'use strict';
+	switch (
+		property == null
+			? typeof array[0]
+			: typeof array[0][property]
+	){
+		case 'number': return (asc ?? true)
+			? property == null ? array.sort((a, b) => a - b) : array.sort((a, b) => a[property] - b[property])
+			: property == null ? array.sort((a, b) => b - a) : array.sort((a, b) => b[property] - a[property]);
+		case 'string': return (asc ?? true)
+			? property == null ? array.sort((a, b) => a.localeCompare(b)) : array.sort((a, b) => a[property].localeCompare(b[property]))
+			: property == null ? array.sort((a, b) => b.localeCompare(a)) : array.sort((a, b) => b[property].localeCompare(a[property]));
 	}
-	return result;
-};
-/*---SNAKELIZE-------------------------------------------------*/
-satus.snakelize = function(string) {
-	return string.replace(/([A-Z])/g, '-$1').toLowerCase();
-};
-/*---SORT------------------------------------------------------*/
-satus.sort = function(array, order, property) {
-	var type;
-
-	if (property) {
-		type = typeof array[0][property];
-	} else {
-		type = typeof array[0];
-	}
-
-	if (order !== 'desc') {
-		if (type === 'number') {
-			if (property) {
-				return array.sort(function(a, b) {
-					return a[property] - b[property];
-				});
-			} else {
-				return array.sort(function(a, b) {
-					return a - b;
-				});
-			}
-		} else if (type === 'string') {
-			if (property) {
-				return array.sort(function(a, b) {
-					return a[property].localeCompare(b[property]);
-				});
-			} else {
-				return array.sort(function(a, b) {
-					return a.localeCompare(b);
-				});
-			}
-		}
-	} else {
-		if (type === 'number') {
-			if (property) {
-				return array.sort(function(a, b) {
-					return b[property] - a[property];
-				});
-			} else {
-				return array.sort(function(a, b) {
-					return b - a;
-				});
-			}
-		} else if (type === 'string') {
-			if (property) {
-				return array.sort(function(a, b) {
-					return b[property].localeCompare(a[property]);
-				});
-			} else {
-				return array.sort(function(a, b) {
-					return b.localeCompare(a);
-				});
-			}
-		}
-	}
-};
-/*---data------------------------------------------------------*/
-satus.data = function(element, data) {
-	if (data) {
-		for (var key in data) {
-			var value = data[key];
-
-			if (satus.isFunction(value)) {
-				value = value();
-			}
-
-			element.dataset[key] = value;
-		}
-	}
-};
-/*---# ISSET-----------------------------------------------------*/
-satus.isset = function(target, is_object) {
-	if (is_object === true) {
-		var keys = target.split('.').filter(function(value) {
-			return value != '';
-		});
-
-		for (var i = 0, l = keys.length; i < l; i++) {
-			if (satus.isset(target[keys[i]])) {
-				target = target[keys[i]];
-			} else {
-				return undefined;
-			}
-		}
-
-		return target;
-	} else {
-		if (target === null || target === undefined) {
-			return false;
-		}
-	}
-
-	return true;
+	return array;
 };
 
-/*-------------------------------------------------------------
-	# is___(target)
---------------------------------------------------------------*/
-satus.isFunction =function(target){return typeof target ==='function';};
+/**
+ * @see {@linkcode satus.data} in `ref.d.ts`
+ * @param {HTMLElement} element
+ * @param {{}} data
+ * @returns 
+ */
+satus.data = (element, data) => {
+	'use strict';
+	if (data == null) return;
+	for (const key in data) {
+		const value = data[key];
 
-satus.isArray	 =function(t){if(Array.isArray(t))			 				{return true;}else{return false;}};
-satus.isString	 =function(t){if(typeof t ==='string')						{return true;}else{return false;}};
-satus.isNumber	 =function(t){if(typeof t ==='number'&&isNaN(t)===false){return true;}else{return false;}};
-satus.isObject	 =function(t){return t instanceof Object && t !==null;};
-satus.isElement	 =function(t){return t instanceof Element || t instanceof HTMLDocument;};
-satus.isNodeList =function(t){return t instanceof NodeList;};
-satus.isBoolean  =function(t){return t ===false || t ===true;};
-/*---LOG------------------------------------------------------*/
-satus.log =function(){console.log.apply(null, arguments);};
+		element.dataset[key] = typeof value === 'function' ? value() : value;
+	}
+};
+
+satus.isset = t => t != null;
+satus.isFunction = t => typeof t === 'function';
+satus.isString = t => typeof t === 'string';
+satus.isBoolean = t => typeof t === 'boolean';
+satus.isNumber = t => typeof t === 'number' && !Number.isNaN(t);
+satus.isArray = t => Array.isArray(t);
+satus.isNodeList = t => t instanceof NodeList;
+satus.isObject = t => t instanceof Object && t != null;
+satus.isElement = t => t instanceof Element || t instanceof Document;
+satus.log = (...args) => console.log(...args);
 
 /*--------------------------------------------------------------
-
-
 # DOM
+--------------------------------------------------------------*/
 
+satus.append = (child, parent) => (parent ?? document.body).appendChild(child);
 
---------------------------------------------------------------*/
-/*--------------------------------------------------------------
-# APPEND
---------------------------------------------------------------*/
-satus.append = function(child, parent) {
-	(parent || document.body).appendChild(child);
-};
-/*--------------------------------------------------------------
-# ATTR	 setAttributes
---------------------------------------------------------------*/
+// TODO ↓
+// TODO ↓ refactoring / documentation
+// TODO ↓
+
 satus.setAttributes = satus.attr = function(element, attributes) {
 	if (attributes) {
 		for (var name in attributes) {
@@ -336,7 +301,7 @@ satus.clone = function(item) {
 # CREATE ELEMENT
 --------------------------------------------------------------*/
 satus.createElement = function(tagName, componentName, namespaceURI) {
-	var camelizedTagName = this.camelize(tagName),
+	var camelizedTagName = this.toCamelCase(tagName),
 		className = 'satus-' + (componentName || tagName),
 		element,
 		match = className.match(/__[^__]+/g);
@@ -413,10 +378,8 @@ satus.css = function(element, property) {
 /*--------------------------------------------------------------
 # CLASS
 --------------------------------------------------------------*/
-satus.addClass = satus.class = function(element, className) {
-	if (className) {
-		element.classList.add(className);
-	}
+satus.addClass = satus.class = (element, className) => {
+	if (className) element.classList.add(className);
 };
 /*--------------------------------------------------------------
 # STYLE
@@ -708,7 +671,7 @@ satus.render = function(skeleton, container, property, childrenOnly, prepend, sk
 
 	if (skeleton.component && childrenOnly !== true) {
 		var tagName = skeleton.component,
-			camelizedTagName = this.camelize(tagName),
+			camelizedTagName = this.toCamelCase(tagName),
 			namespaceURI = skeleton.namespaceURI;
 
 		if (!namespaceURI) {
@@ -1405,13 +1368,9 @@ satus.components.textField = function(component, skeleton) {
 			component.selection.removeAttribute('disabled');
 
 			component.hiddenValue.textContent = value.substring(0, start);
-							//console.log(value.substring(0, start));
 			component.selection.style.left = component.hiddenValue.offsetWidth - input.scrollLeft + 'px';
-							//console.log(component.hiddenValue.offsetWidth); console.log( input.scrollLeft )
 			component.hiddenValue.textContent = value.substring(start, end);
-//console.log(component.hiddenValue.textContent);
 			component.selection.style.width = component.hiddenValue.offsetWidth + 'px';
-							//console.log(component.hiddenValue.offsetWidth);
 		}
 
 		this.style.animation = '';
@@ -2800,39 +2759,27 @@ satus.user = {
 --------------------------------------------------------------*/
 
 satus.user.os.name = function() {
-	var app_version = navigator.appVersion;
-
-	if (app_version.indexOf('Win') !== -1) {
-		if (app_version.match(/(Windows 10.0|Windows NT 10.0)/)) {
-			return 'Windows 10';
-		} else if (app_version.match(/(Windows 8.1|Windows NT 6.3)/)) {
-			return 'Windows 8.1';
-		} else if (app_version.match(/(Windows 8|Windows NT 6.2)/)) {
-			return 'Windows 8';
-		} else if (app_version.match(/(Windows 7|Windows NT 6.1)/)) {
-			return 'Windows 7';
-		} else if (app_version.match(/(Windows NT 6.0)/)) {
-			return 'Windows Vista';
-		} else if (app_version.match(/(Windows NT 5.1|Windows XP)/)) {
-			return 'Windows XP';
-		} else {
-			return 'Windows';
-		}
-	} else if (app_version.indexOf('(iPhone|iPad|iPod)') !== -1) {
-		return 'iOS';
-	} else if (app_version.indexOf('Mac') !== -1) {
-		return 'macOS';
-	} else if (app_version.indexOf('Android') !== -1) {
-		return 'Android';
-	} else if (app_version.indexOf('OpenBSD') !== -1) {
-		return 'OpenBSD';
-	} else if (app_version.indexOf('SunOS') !== -1) {
-		return 'SunOS';
-	} else if (app_version.indexOf('Linux') !== -1) {
-		return 'Linux';
-	} else if (app_version.indexOf('X11') !== -1) {
-		return 'UNIX';
+	//! deprecated and can't guarante truthnes
+	const app = navigator.appVersion;
+	if (app.includes('Win')) {
+		//? Windows 11
+		if (app.match(/Windows (NT )?10\.0/)) return 'Windows 10';
+		if (app.match(/Windows (8\.1|NT 6\.3)/)) return 'Windows 8.1';
+		if (app.match(/Windows (8|NT 6\.2)/)) return 'Windows 8';
+		if (app.match(/Windows (7|NT 6\.1)/)) return 'Windows 7';
+		if (app.match(/Windows NT 6\.0/)) return 'Windows Vista';
+		//? Windows 2000
+		if (app.match(/Windows (NT 5\.1|XP)/)) return 'Windows XP';
+		return 'Windows';
 	}
+	if (app.match(/iP(hone|ad|od)/)) return 'iOS';
+	if (app.includes('Mac')) return 'macOS';
+	if (app.includes('Android')) return 'Android';
+	if (app.includes('OpenBSD')) return 'OpenBSD';
+	if (app.includes('SunOS')) return 'SunOS';
+	if (app.includes('Linux')) return 'Linux';
+	if (app.includes('X11')) return 'UNIX';
+	return 'Unknown';
 };
 
 
@@ -2840,13 +2787,8 @@ satus.user.os.name = function() {
 # BITNESS
 --------------------------------------------------------------*/
 
-satus.user.os.bitness = function() {
-	if (navigator.appVersion.match(/(Win64|x64|x86_64|WOW64)/)) {
-		return '64-bit';
-	} else {
-		return '32-bit';
-	}
-};
+//! deprecated and can't guarante truthnes
+satus.user.os.bitness = () => navigator.appVersion.match(/(Win64|x64|x86_64|WOW64)/) != null ? '64-bit' : '32-bit';
 
 
 /*--------------------------------------------------------------
@@ -2858,24 +2800,16 @@ satus.user.os.bitness = function() {
 --------------------------------------------------------------*/
 
 satus.user.browser.name = function() {
+	//! can't guarante truthnes
 	var user_agent = navigator.userAgent;
-	if (!!navigator.brave) {
-		return 'Brave';
-	}	else if (user_agent.indexOf("Opera") != -1 || user_agent.indexOf('OPR') != -1) {
-		return 'Opera';
-	} else if (user_agent.indexOf('Vivaldi') !== -1) {
-		return 'Vivaldi';
-	} else if (user_agent.indexOf('Edge') !== -1) {
-		return 'Edge';
-	} else if (user_agent.indexOf('Chrome') !== -1) {
-		return 'Chrome';
-	} else if (user_agent.indexOf('Safari') !== -1) {
-		return 'Safari';
-	} else if (user_agent.indexOf('Firefox') !== -1) {
-		return 'Firefox';
-	} else if (user_agent.indexOf('MSIE') !== -1) {
-		return 'IE';
-	}
+	if ('brave' in navigator) return 'Brave';
+	if (user_agent.match(/Opera|OPR/)) return 'Opera';
+	if (user_agent.includes('Vivaldi')) return 'Vivaldi';
+	if (user_agent.includes('Edge')) return 'Edge';
+	if (user_agent.includes('Chrome')) return 'Chrome';
+	if (user_agent.includes('Safari')) return 'Safari';
+	if (user_agent.includes('Firefox')) return 'Firefox';
+	if (user_agent.includes('MSIE')) return 'IE';
 };
 
 
@@ -2896,6 +2830,7 @@ satus.user.browser.version = function() {
 --------------------------------------------------------------*/
 
 satus.user.browser.platform = function() {
+	//! deprecated
 	return navigator.platform;
 };
 
@@ -3005,10 +2940,10 @@ satus.user.browser.audio = function() {
 satus.user.browser.video = function() {
 	var video = document.createElement('video'),
 		types = {
-			//ogg: 'video/ogg; codecs="theora"',
+			//// ogg: 'video/ogg; codecs="theora"',
 			'H.264 Baseline Profile 3.0': 'video/mp4; codecs="avc1.42E01E"',
 			'H.264 Main Profile 4.0': 'video/mp4; codecs="avc1.640028"',
-			//webm: 'video/webm; codecs="vp8, vorbis"',
+			//// webm: 'video/webm; codecs="vp8, vorbis"',
 			vp9: 'video/webm; codecs="vp9"',
 			av1: 'video/mp4; codecs=av01.0.05M.08',
 			hls: 'application/x-mpegURL; codecs="avc1.42E01E"'

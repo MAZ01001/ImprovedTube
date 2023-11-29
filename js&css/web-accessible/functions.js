@@ -6,60 +6,71 @@ var ImprovedTube;
 >>> FUNCTIONS
 --------------------------------------------------------------*/
 
-ImprovedTube.childHandler = function (node) {
-	//console.log(node.nodeName);
-	if (node.nodeName === 'SCRIPT' || node.nodeName === 'iron-iconset-svg' || node.nodeName === 'svg' || node.nodeName === 'SPAN' || node.nodeName === '#text' || node.nodeName === '#comment' || node.nodeName === 'yt-icon-shape' || node.nodeName === 'DOM-IF' || node.nodeName === 'DOM-REPEAT') {
-		return
+ImprovedTube.childHandler = function (node, removed) {
+	'use strict';
+	switch(node.nodeName){
+		case'SCRIPT':
+		case'iron-iconset-svg':
+		case'svg':
+		case'SPAN':
+		case'#text':
+		case'#comment':
+		case'yt-icon-shape':
+		case'DOM-IF':
+		case'DOM-REPEAT':
+		return;
 	}
-	var children = node.children;
-	this.ytElementsHandler(node);
+	if (removed ?? false) {
+		//@ts-ignore when node is a button then it has an id
+		if(node.nodeName === 'BUTTON' && node.id === 'it-popup-playlist-button') ImprovedTube.playlistPopupUpdate();
+	} else this.ytElementsHandler(node);
 
-	if (children) {
-		for (var i = 0, l = children.length; i < l; i++) {
-			ImprovedTube.childHandler(children[i]);
-		}
-	}
+	for (const childNode of node.childNodes) this.childHandler(childNode, removed);
 };
 
 ImprovedTube.ytElementsHandler = function (node) {
-	var name = node.nodeName,
+	'use strict';
+	const name = node.nodeName,
 		id = node.id;
 
+	switch(true){
+		case name === 'A':
+			if (node.href) {
+				this.channelDefaultTab(node);
+
+				if (node.classList.contains('ytd-thumbnail')) this.blacklist('video', node);
+				if (ImprovedTube.regex.channel_home_page.test(node.pathname)) this.blacklist('channel', node);
+			}
+		break;
+	}
 	if (name === 'A') {
-		if (node.href) {
-			this.channelDefaultTab(node);
+	} else if (name === 'META') {
+		if(node.getAttribute('name')) {
+			//~ duplicate
+			//// if (node.getAttribute('name') === 'title') ImprovedTube.title = node.content;
+			//~ duplicate
+			//// if (node.getAttribute('name') === 'description') ImprovedTube.description = node.content;
+			//~ might help our darkmode/themes
+			//// if (node.getAttribute('name') === 'themeColor') ImprovedTube.themeColor = node.content;
 
-			if (node.className.indexOf('ytd-thumbnail') !== -1) {
-				this.blacklist('video', node);
-			}
-			if (node.href.match(/@|((channel|user|c)\/)([^/]+)/)) {
-				this.blacklist('channel', node);
-			}
-		}
-	}  else if (name === 'META') {
-		 if(node.getAttribute('name')) {
-			//if(node.getAttribute('name') === 'title')			{ImprovedTube.title = node.content;}		//duplicate
-			//if(node.getAttribute('name') === 'description')		{ImprovedTube.description = node.content;}	//duplicate
-			//if node.getAttribute('name') === 'themeColor')			{ImprovedTube.themeColor = node.content;}	//might help our darkmode/themes
-
-//Do we need any of these here before the player starts?
-			//if(node.getAttribute('name') === 'keywords')			{ImprovedTube.keywords = node.content;}
-			} else if (node.getAttribute('itemprop')) {
-			//if(node.getAttribute('itemprop') === 'name')			{ImprovedTube.title = node.content;}	
-			if(node.getAttribute('itemprop') === 'genre')			{ImprovedTube.category  = node.content;}
-			//if(node.getAttribute('itemprop') === 'channelId')		{ImprovedTube.channelId = node.content;}
-			//if(node.getAttribute('itemprop') === 'videoId')		{ImprovedTube.videoId = node.content;}
-//The following infos will enable awesome, smart features.  Some of which everyone should use.
-			//if(node.getAttribute('itemprop') === 'description')	{ImprovedTube.description = node.content;}
-		    //if(node.getAttribute('itemprop') === 'duration')		{ImprovedTube.duration = node.content;}
-			//if(node.getAttribute('itemprop') === 'interactionCount'){ImprovedTube.views = node.content;}
-			//if(node.getAttribute('itemprop') === 'isFamilyFriendly'){ImprovedTube.isFamilyFriendly = node.content;}		
-			//if(node.getAttribute('itemprop') === 'unlisted')		{ImprovedTube.unlisted = node.content;}
-			//if(node.getAttribute('itemprop') === 'regionsAllowed'){ImprovedTube.regionsAllowed = node.content;}
-			//if(node.getAttribute('itemprop') === 'paid')			{ImprovedTube.paid = node.content;}
-			// if(node.getAttribute('itemprop') === 'datePublished'	){ImprovedTube.datePublished = node.content;}  
-					//to use in the "how long ago"-feature, not to fail without API key?  just like the "day-of-week"-feature above	
-			// if(node.getAttribute('itemprop') === 'uploadDate')	{ImprovedTube.uploadDate = node.content;}
+			//? Do we need any of these here before the player starts?
+			//// if (node.getAttribute('name') === 'keywords') ImprovedTube.keywords = node.content;
+		} else if (node.getAttribute('itemprop')) {
+			//// if (node.getAttribute('itemprop') === 'name') ImprovedTube.title = node.content;
+			if(node.getAttribute('itemprop') === 'genre'){ImprovedTube.category  = node.content;}
+			//// if (node.getAttribute('itemprop') === 'channelId') ImprovedTube.channelId = node.content;
+			//// if (node.getAttribute('itemprop') === 'videoId') ImprovedTube.videoId = node.content;
+			//~ The following infos will enable awesome, smart features.  Some of which everyone should use.
+			//// if (node.getAttribute('itemprop') === 'description') ImprovedTube.description = node.content;
+		    //// if (node.getAttribute('itemprop') === 'duration') ImprovedTube.duration = node.content;
+			//// if (node.getAttribute('itemprop') === 'interactionCount') ImprovedTube.views = node.content;
+			//// if (node.getAttribute('itemprop') === 'isFamilyFriendly') ImprovedTube.isFamilyFriendly = node.content;
+			//// if (node.getAttribute('itemprop') === 'unlisted') ImprovedTube.unlisted = node.content;
+			//// if (node.getAttribute('itemprop') === 'regionsAllowed') ImprovedTube.regionsAllowed = node.content;
+			//// if (node.getAttribute('itemprop') === 'paid') ImprovedTube.paid = node.content;
+			//// if (node.getAttribute('itemprop') === 'datePublished') ImprovedTube.datePublished = node.content;
+			//? to use in the "how long ago"-feature, not to fail without API key?  just like the "day-of-week"-feature above	
+			//// if (node.getAttribute('itemprop') === 'uploadDate') ImprovedTube.uploadDate = node.content;
 		}
 	} 
 		else if (name === 'YTD-TOGGLE-BUTTON-RENDERER' || name === 'YTD-PLAYLIST-LOOP-BUTTON-RENDERER') {
@@ -71,15 +82,22 @@ ImprovedTube.ytElementsHandler = function (node) {
 
 			if (index === 0) {
 				if (this.storage.playlist_reverse === true) {
+					// TODO ?!
 					try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode.parentNode;}
-					catch{try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode;}
-						catch{try{this.elements.playlist.actions = node.parentNode.parentNode;}
-							catch{try{this.elements.playlist.actions = node.parentNode;}
-								catch{try{this.elements.playlist.actions = node;}catch{}}
+					catch{
+						try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode;}
+						catch{
+							try{this.elements.playlist.actions = node.parentNode.parentNode;}
+							catch{
+								try{this.elements.playlist.actions = node.parentNode;}
+								catch{
+									try{this.elements.playlist.actions = node;}
+									catch{}
 								}
-							}	
-						}	
+							}
+						}
 					}
+				}
 				this.playlistReverse();
 			} else if (index === 1) {
 				this.elements.playlist.shuffle_button = node;
@@ -87,15 +105,22 @@ ImprovedTube.ytElementsHandler = function (node) {
 				this.playlistShuffle();
 
 				if (this.storage.playlist_reverse === true) {
+					// TODO ?!
 					try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode.parentNode;}
-					catch{try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode;}
-						catch{try{this.elements.playlist.actions = node.parentNode.parentNode;}
-							catch{try{this.elements.playlist.actions = node.parentNode;}
-								catch{try{this.elements.playlist.actions = node;}catch{}}
+					catch{
+						try{this.elements.playlist.actions = node.parentNode.parentNode.parentNode;}
+						catch{
+							try{this.elements.playlist.actions = node.parentNode.parentNode;}
+							catch{
+								try{this.elements.playlist.actions = node.parentNode;}
+								catch{
+									try{this.elements.playlist.actions = node;}
+									catch{}
 								}
-							}	
-						}	
+							}
+						}
 					}
+				}
 				this.playlistReverse();
 			}
 		}
@@ -422,7 +447,6 @@ ImprovedTube.playerOnEnded = function (event) {
 
 	ImprovedTube.messages.send({
 		action: 'analyzer',
-		//adding "?" (not a fix)
 		name: ImprovedTube.elements.yt_channel_name?.__data.tooltipText,
 		time: ImprovedTube.played_time
 	});
@@ -570,13 +594,11 @@ ImprovedTube.createPlayerButton = function (options) {
 };
 
 ImprovedTube.empty = function (element) {
-	for (var i = element.childNodes.length - 1; i > -1; i--) {
-		element.childNodes[i].remove();
-	}
+	element.replaceChildren();
 };
 
 ImprovedTube.isset = function (variable) {
-	return !(typeof variable === 'undefined' || variable === null || variable === 'null');
+	return !(variable == null || variable === 'null');
 };
 
 ImprovedTube.stopPropagation = function (event) {

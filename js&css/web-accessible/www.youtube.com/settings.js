@@ -102,9 +102,8 @@ ImprovedTube.improvedtubeYoutubeIcon = function () {
 				document.body.appendChild(scrim);
 				document.body.appendChild(iframe);
 
-				ImprovedTube.messages.send({
-					requestOptionsUrl: true
-				});
+				// BUG ? no response implemented in js&css/web-accessible/core.js
+				ImprovedTube.messages.send({ requestOptionsUrl: true });
 			}
 		});
 

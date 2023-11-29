@@ -12,10 +12,6 @@ var extension;
 # Get URL parameter
 --------------------------------------------------------------*/
 
-/*--------------------------------------------------------------
-# GET URL PARAMETER
---------------------------------------------------------------*/
-
 extension.functions.getUrlParameter = function (url, parameter) {
 	var match = url.match(new RegExp('(\\?|\\&)' + parameter + '=[^&]+'));
 
